@@ -1,0 +1,2 @@
+This folder holds uploaded images locally.
+In production (Render), uploads are ephemeral — consider using Cloudinary or AWS S3 for persistent image storage.

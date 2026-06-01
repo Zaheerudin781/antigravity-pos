@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment files — NEVER commit real secrets
+.env
+backend/.env
+
+# Build outputs
+frontend/dist/
+frontend/.vercel/
+
+# Upload files (use cloud storage in production)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
