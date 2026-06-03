@@ -28,7 +28,7 @@ export default function WebsitePage() {
     fetchStatus();
   }, []);
 
-  const publicUrl = `http://localhost:3000/menu/${slug}`;
+  const publicUrl = `${window.location.origin}/menu/${slug}`;
 
   useEffect(() => {
     if (published && slug && canvasRef.current) {

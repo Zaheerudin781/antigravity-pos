@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import api from '../api/axios';
 
-const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+const BACKEND = import.meta.env.VITE_BACKEND_URL
+  || (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5000');
 
 export default function PublicMenuPage({ slug }) {
   const [restaurant, setRestaurant] = useState(null);

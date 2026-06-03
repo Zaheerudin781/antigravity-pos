@@ -12,6 +12,10 @@ import WebsitePage from '../pages/WebsitePage';
 import AccountPage from '../pages/AccountPage';
 import OrderSidebar from './OrderSidebar';
 
+const BACKEND = import.meta.env.VITE_API_URL
+  ? import.meta.env.VITE_API_URL.replace('/api', '')
+  : 'http://localhost:5000';
+
 const ROLE_TABS = {
   Admin:   ['ORDERS','TABLES','ORDER','MENU','STAFF','REPORTS','PRINTING','RESTAURANT','WEBSITE','ACCOUNT'],
   Waiter:  ['ORDERS','TABLES','ORDER','MENU'],
@@ -122,7 +126,7 @@ export default function MainLayout() {
         <div className="main-header__brand">
           {state.restaurant?.logoUrl ? (
             <img
-              src={state.restaurant.logoUrl.startsWith('http') ? state.restaurant.logoUrl : `http://localhost:5000${state.restaurant.logoUrl}`}
+              src={state.restaurant.logoUrl.startsWith('http') ? state.restaurant.logoUrl : `${BACKEND}${state.restaurant.logoUrl}`}
               alt="logo"
               className="main-header__logo-img"
             />

@@ -46,7 +46,10 @@ export default function TablesPage() {
     fetchTables();
     fetchRooms();
 
-    const socket = io('http://localhost:5000', { transports: ['websocket', 'polling'] });
+    const socketUrl = import.meta.env.VITE_API_URL
+      ? import.meta.env.VITE_API_URL.replace('/api', '')
+      : 'http://localhost:5000';
+    const socket = io(socketUrl, { transports: ['websocket', 'polling'] });
     socketRef.current = socket;
 
     socket.on('connect', () => {
