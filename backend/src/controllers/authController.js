@@ -10,7 +10,7 @@ const generateToken = (user) =>
   jwt.sign(
     { userId: user._id, tenantId: user.tenantId, role: user.role, name: user.name },
     process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN }
+    { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
   );
 
 // POST /api/auth/register — creates tenant + admin user
