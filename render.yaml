@@ -12,11 +12,11 @@ services:
       - key: PORT
         value: 10000
       - key: MONGO_URI
-        sync: false   # Set this manually in Render dashboard
+        value: mongodb+srv://zaheerhamza0_db_user:hamza1234@cluster0.zt64dhv.mongodb.net/antigravity_pos?retryWrites=true&w=majority&appName=Cluster0
       - key: JWT_SECRET
-        sync: false   # Set this manually in Render dashboard
+        value: antigravity_pos_jwt_super_secret_key_2024
       - key: JWT_EXPIRES_IN
         value: 7d
       - key: FRONTEND_URL
-        sync: false   # Set to your Vercel URL after deploying frontend
+        value: https://frontend-hamza-s-projects-next.vercel.app
     healthCheckPath: /api/health
