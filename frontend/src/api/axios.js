@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // In production (Vercel), VITE_API_URL points to your Render backend
 // In development, /api is proxied to localhost:5000 by vite.config.js
-const BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const BASE_URL = (import.meta.env.VITE_API_URL || '/api').trim();
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -19,7 +19,8 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
+    const isAuthRoute = err.config?.url?.includes('/auth/login') || err.config?.url?.includes('/auth/staff-pin');
+    if (err.response?.status === 401 && !isAuthRoute) {
       localStorage.removeItem('pos_token');
       localStorage.removeItem('pos_user');
       localStorage.removeItem('pos_restaurant');

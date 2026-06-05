@@ -7,7 +7,7 @@ export default function LoginPage() {
   const [tab, setTab] = useState('login'); // login | pin | register
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [form, setForm] = useState({ name: '', email: '', password: '', businessName: '' });
+  const [form, setForm] = useState({ name: '', email: '', password: '', businessName: '', tenantId: '' });
 
   // PIN Login States
   const [tenantId, setTenantId] = useState(localStorage.getItem('pos_last_tenant') || '');
@@ -18,7 +18,7 @@ export default function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault(); setError(''); setLoading(true);
     try {
-      const { data } = await api.post('/auth/login', { email: form.email, password: form.password });
+      const { data } = await api.post('/auth/login', { email: form.email, password: form.password, tenantId: form.tenantId });
       if (!data.success) throw new Error(data.message || 'Login failed');
       dispatch({ type: 'LOGIN', payload: data });
       notify(`Welcome back, ${data.user.name}!`);
@@ -116,6 +116,10 @@ export default function LoginPage() {
             <div className="form-group">
               <label className="form-label">Password</label>
               <input className="form-input" type="password" placeholder="••••••••" value={form.password} onChange={e => set('password', e.target.value)} required />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Restaurant ID / Slug (Optional)</label>
+              <input className="form-input" type="text" placeholder="e.g. standard-bistro-1234" value={form.tenantId} onChange={e => set('tenantId', e.target.value)} />
             </div>
             <button className="btn btn-primary btn-block" type="submit" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In'}

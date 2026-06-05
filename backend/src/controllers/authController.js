@@ -86,14 +86,28 @@ exports.register = async (req, res) => {
 // POST /api/auth/login — email + password login
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, tenantId } = req.body;
     if (!email || !password) return res.status(400).json({ success: false, message: 'Email and password required' });
 
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    let user;
+    if (tenantId) {
+      user = await User.findOne({ email: email.toLowerCase(), tenantId });
+      if (!user) return res.status(401).json({ success: false, message: 'Invalid credentials' });
+      const match = await user.comparePassword(password);
+      if (!match) return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    } else {
+      const users = await User.find({ email: email.toLowerCase() }).sort({ createdAt: -1 });
+      if (users.length === 0) return res.status(401).json({ success: false, message: 'Invalid credentials' });
 
-    const match = await user.comparePassword(password);
-    if (!match) return res.status(401).json({ success: false, message: 'Invalid credentials' });
+      for (const u of users) {
+        const match = await u.comparePassword(password);
+        if (match) {
+          user = u;
+          break;
+        }
+      }
+      if (!user) return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
 
     const restaurant = await Restaurant.findOne({ tenantId: user.tenantId });
     const token = generateToken(user);
