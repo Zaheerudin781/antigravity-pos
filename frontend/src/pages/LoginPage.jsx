@@ -19,10 +19,12 @@ export default function LoginPage() {
     e.preventDefault(); setError(''); setLoading(true);
     try {
       const { data } = await api.post('/auth/login', { email: form.email, password: form.password });
+      if (!data.success) throw new Error(data.message || 'Login failed');
       dispatch({ type: 'LOGIN', payload: data });
       notify(`Welcome back, ${data.user.name}!`);
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      const msg = err.response?.data?.message || err.message || 'Login failed';
+      setError(`${msg} (email: ${form.email})`);
     } finally { setLoading(false); }
   };
 
@@ -30,10 +32,12 @@ export default function LoginPage() {
     e.preventDefault(); setError(''); setLoading(true);
     try {
       const { data } = await api.post('/auth/register', form);
+      if (!data.success) throw new Error(data.message || 'Registration failed');
       dispatch({ type: 'LOGIN', payload: data });
-      notify(`Restaurant ${form.businessName} registered successfully!`);
+      notify(`Restaurant "${form.businessName}" registered! Your Restaurant ID: ${data.user.tenantId}`);
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
+      const msg = err.response?.data?.message || err.message || 'Registration failed';
+      setError(msg);
     } finally { setLoading(false); }
   };
 
