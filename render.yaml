@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: antigravity-pos-backend
+    name: antigravity-pos
     runtime: node
     plan: free
     rootDir: backend
