@@ -49,6 +49,7 @@ app.use('/api', require('./routes/settings'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/categories', require('./routes/categories'));
 app.use('/api/rooms', require('./routes/rooms'));
+app.use('/api', require('./routes/saas'));
 
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));

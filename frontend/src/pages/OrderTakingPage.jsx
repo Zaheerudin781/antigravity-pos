@@ -56,6 +56,8 @@ export default function OrderTakingPage() {
 
   // Submitting
   const [submitting, setSubmitting] = useState(false);
+  const [limitModalOpen, setLimitModalOpen] = useState(false);
+  const [limitModalMessage, setLimitModalMessage] = useState('');
 
   // Fetch menu + tables + categories
   useEffect(() => {
@@ -290,7 +292,13 @@ export default function OrderTakingPage() {
         dispatch({ type: 'SET_TAB', payload: 'ORDERS' });
       }, 400);
     } catch (err) {
-      notify(err.response?.data?.message || 'Failed to process order', 'error');
+      const isLimitError = err.response?.status === 403 && (err.response?.data?.limitReached || err.response?.data?.subscriptionExpired);
+      if (isLimitError) {
+        setLimitModalMessage(err.response.data.message);
+        setLimitModalOpen(true);
+      } else {
+        notify(err.response?.data?.message || 'Failed to process order', 'error');
+      }
     } finally {
       setSubmitting(false);
     }
@@ -539,6 +547,33 @@ export default function OrderTakingPage() {
                   Add {itemQty}× — {sym}{((selectedItem.price + chosenMods.reduce((s, m) => s + m.price, 0)) * itemQty).toFixed(2)}
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {limitModalOpen && (
+        <div className="modal-overlay" style={{ zIndex: 1500 }} onClick={() => setLimitModalOpen(false)}>
+          <div className="modal" style={{ maxWidth: '400px', textAlign: 'center' }} onClick={e => e.stopPropagation()}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
+            <h2 style={{ marginBottom: '8px', color: 'var(--danger)' }}>Subscription Limit Reached</h2>
+            <p className="text-muted text-sm" style={{ marginBottom: '24px', lineHeight: '1.5' }}>
+              {limitModalMessage}
+            </p>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button className="btn btn-outline" style={{ flex: 1 }} onClick={() => setLimitModalOpen(false)}>
+                Dismiss
+              </button>
+              <button 
+                className="btn btn-primary" 
+                style={{ flex: 2 }} 
+                onClick={() => {
+                  setLimitModalOpen(false);
+                  dispatch({ type: 'SET_TAB', payload: 'BILLING' });
+                }}
+              >
+                💳 Upgrade Plan
+              </button>
             </div>
           </div>
         </div>

@@ -14,8 +14,10 @@ const restaurantSchema = new mongoose.Schema({
   receiptFooter: { type: String, default: 'Thank you for dining with us!' },
   isWebsitePublished: { type: Boolean, default: false },
   websiteSlug: { type: String, default: '' },
-  subscriptionTier: { type: String, enum: ['Free', 'Pro', 'Enterprise'], default: 'Pro' },
-  subscriptionExpiry: { type: Date, default: () => new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) },
+  subscriptionTier: { type: String, enum: ['Free', 'Small', 'Medium', 'Large'], default: 'Free' },
+  billingInterval: { type: String, enum: ['monthly', 'yearly'], default: 'monthly' },
+  subscriptionStatus: { type: String, enum: ['active', 'trial', 'expired'], default: 'trial' },
+  subscriptionExpiry: { type: Date, default: () => new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) },
   timezone: { type: String, default: 'America/New_York' },
 }, { timestamps: true });
 

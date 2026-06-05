@@ -10,6 +10,8 @@ import PrintingPage from '../pages/PrintingPage';
 import RestaurantPage from '../pages/RestaurantPage';
 import WebsitePage from '../pages/WebsitePage';
 import AccountPage from '../pages/AccountPage';
+import BillingPage from '../pages/BillingPage';
+import CEODashboardPage from '../pages/CEODashboardPage';
 import OrderSidebar from './OrderSidebar';
 
 const BACKEND = import.meta.env.VITE_API_URL
@@ -17,7 +19,8 @@ const BACKEND = import.meta.env.VITE_API_URL
   : 'http://localhost:5000';
 
 const ROLE_TABS = {
-  Admin:   ['ORDERS','TABLES','ORDER','MENU','STAFF','REPORTS','PRINTING','RESTAURANT','WEBSITE','ACCOUNT'],
+  CEO:     ['CEODASHBOARD', 'ACCOUNT'],
+  Admin:   ['ORDERS','TABLES','ORDER','MENU','STAFF','REPORTS','PRINTING','RESTAURANT','WEBSITE','BILLING','ACCOUNT'],
   Waiter:  ['ORDERS','TABLES','ORDER','MENU'],
   Chef:    ['ORDERS','MENU'],
   Cashier: ['ORDERS','TABLES','ORDER','MENU','PRINTING']
@@ -26,13 +29,15 @@ const ROLE_TABS = {
 const PAGE_MAP = {
   ORDERS: OrdersPage, TABLES: TablesPage, ORDER: OrderTakingPage, MENU: MenuPage,
   STAFF: StaffPage, REPORTS: ReportsPage, PRINTING: PrintingPage,
-  RESTAURANT: RestaurantPage, WEBSITE: WebsitePage, ACCOUNT: AccountPage,
+  RESTAURANT: RestaurantPage, WEBSITE: WebsitePage, BILLING: BillingPage,
+  CEODASHBOARD: CEODashboardPage, ACCOUNT: AccountPage,
 };
 
 const TAB_LABELS = {
   ORDERS: '🧾 ORDERS', TABLES: '🪑 TABLES', ORDER: '➕ NEW ORDER',
   MENU: '🍔 MENU', STAFF: '👥 STAFF', REPORTS: '📊 REPORTS',
-  PRINTING: '🖨️ PRINT', RESTAURANT: '🏪 RESTAURANT', WEBSITE: '🌐 WEBSITE', ACCOUNT: '👤 ACCOUNT',
+  PRINTING: '🖨️ PRINT', RESTAURANT: '🏪 RESTAURANT', WEBSITE: '🌐 WEBSITE',
+  BILLING: '💳 SUBSCRIPTION', CEODASHBOARD: '👑 CEO DASHBOARD', ACCOUNT: '👤 ACCOUNT',
 };
 
 export default function MainLayout() {

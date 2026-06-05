@@ -58,6 +58,42 @@ exports.createOrder = async (req, res) => {
     if (!staffId || staffId === '') staffId = null;
 
     const restaurant = await Restaurant.findOne({ tenantId: req.tenantId });
+    if (!restaurant) return res.status(404).json({ success: false, message: 'Restaurant not found' });
+
+    // Enforce SaaS Subscription Limits
+    const tier = restaurant.subscriptionTier || 'Free';
+    let limit = 50; // default for Free
+    if (tier === 'Small') limit = 700;
+    else if (tier === 'Medium') limit = 1200;
+    else if (tier === 'Large') limit = Infinity;
+
+    // Verify expiry date (except for Free plan)
+    const now = new Date();
+    if (restaurant.subscriptionExpiry && now > new Date(restaurant.subscriptionExpiry) && tier !== 'Free') {
+      return res.status(403).json({
+        success: false,
+        message: 'Your SaaS subscription has expired. Please upgrade or renew your plan to continue taking orders.',
+        subscriptionExpired: true
+      });
+    }
+
+    // Query current calendar month's order count for this tenant
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const orderCount = await Order.countDocuments({
+      tenantId: req.tenantId,
+      createdAt: { $gte: startOfMonth }
+    });
+
+    if (orderCount >= limit) {
+      return res.status(403).json({
+        success: false,
+        message: `Subscription order limit reached (${orderCount}/${limit} orders). Please upgrade your SaaS plan to continue taking orders.`,
+        limitReached: true,
+        limit,
+        current: orderCount
+      });
+    }
+
     const taxRate = restaurant?.taxRate || 0;
 
     const subtotal = items.reduce((sum, i) => {

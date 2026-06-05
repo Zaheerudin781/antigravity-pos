@@ -44,6 +44,20 @@ const seedDatabase = async () => {
       });
     }
 
+    // Seed CEO User
+    const existingCEO = await User.findOne({ email: 'ceo@antigravity.com' });
+    if (!existingCEO) {
+      console.log('🌱 Seeding CEO user...');
+      await User.create({
+        tenantId: 'saas-platform',
+        name: 'SaaS CEO',
+        email: 'ceo@antigravity.com',
+        passwordHash: 'ceo1234', // Will be hashed automatically by pre-save
+        role: 'CEO',
+        isActive: true
+      });
+    }
+
     // 3. Seed Rooms
     const existingRooms = await Room.find({ tenantId });
     if (existingRooms.length === 0) {
