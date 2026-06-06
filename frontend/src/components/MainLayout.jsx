@@ -160,7 +160,7 @@ export default function MainLayout() {
       {/* NAV */}
       <nav className="main-nav">
         <div className="main-nav__scrollable">
-          {visibleTabs.map(tab => (
+          {visibleTabs.filter(tab => tab !== 'ORDER').map(tab => (
             <button
               key={tab}
               className={`nav-item ${state.activeTab === tab ? 'active' : ''} ${tab === 'ORDER' ? 'nav-item--cta' : ''}`}
