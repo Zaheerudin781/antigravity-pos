@@ -1970,14 +1970,22 @@ export default function PublicMenuPage({ slug }) {
             </div>
             <div className="story-hours">
               <h3>🕒 Working Hours</h3>
-              <div className="story-hours-row">
-                <b>Monday – Friday</b>
-                <span>10:00 AM – 10:00 PM</span>
-              </div>
-              <div className="story-hours-row">
-                <b>Saturday – Sunday</b>
-                <span>09:00 AM – 11:00 PM</span>
-              </div>
+              {restaurant?.openingHours ? (
+                <div className="story-hours-row">
+                  <span style={{ whiteSpace: 'pre-line' }}>{restaurant.openingHours}</span>
+                </div>
+              ) : (
+                <>
+                  <div className="story-hours-row">
+                    <b>Monday – Friday</b>
+                    <span>10:00 AM – 10:00 PM</span>
+                  </div>
+                  <div className="story-hours-row">
+                    <b>Saturday – Sunday</b>
+                    <span>09:00 AM – 11:00 PM</span>
+                  </div>
+                </>
+              )}
               {restaurant?.address && (
                 <div className="story-hours-row" style={{ marginTop: 14, borderTop: '1px solid var(--border-color)', paddingTop: 10, fontSize: '12px', color: 'var(--text-muted)' }}>
                   📍 <b>Location:</b> {restaurant.address}
@@ -2216,8 +2224,8 @@ export default function PublicMenuPage({ slug }) {
               {/* 1. Operating Hours */}
               <div>
                 <h4 style={{ fontSize: '15px', color: 'var(--accent-gold)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>🕒 Operating Hours</h4>
-                <p style={{ fontSize: '13.5px', color: 'var(--text-secondary)', margin: 0 }}>
-                  Mon–Fri: 10:00 AM – 10:00 PM · Sat–Sun: 9:00 AM – 11:00 PM
+                <p style={{ fontSize: '13.5px', color: 'var(--text-secondary)', margin: 0, whiteSpace: 'pre-line' }}>
+                  {restaurant?.openingHours || 'Mon–Fri: 10:00 AM – 10:00 PM · Sat–Sun: 9:00 AM – 11:00 PM'}
                 </p>
               </div>
 
@@ -2236,21 +2244,29 @@ export default function PublicMenuPage({ slug }) {
                 </div>
               )}
 
-              {/* 3. Social Media Icons — clean flex-column */}
-              <div>
-                <h4 style={{ fontSize: '15px', color: 'var(--accent-gold)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>📱 Follow Us</h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', fontSize: '13.5px', color: 'var(--text-secondary)', fontWeight: '500' }}>
-                    <span style={{ fontSize: '18px' }}>📸</span> Instagram
-                  </a>
-                  <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', fontSize: '13.5px', color: 'var(--text-secondary)', fontWeight: '500' }}>
-                    <span style={{ fontSize: '18px' }}>👥</span> Facebook
-                  </a>
-                  <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', fontSize: '13.5px', color: 'var(--text-secondary)', fontWeight: '500' }}>
-                    <span style={{ fontSize: '18px' }}>🐦</span> Twitter / X
-                  </a>
+              {/* 3. Social Media Icons — only show if any link is configured */}
+              {(restaurant?.socialInstagram || restaurant?.socialFacebook || restaurant?.socialTwitter) && (
+                <div>
+                  <h4 style={{ fontSize: '15px', color: 'var(--accent-gold)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>📱 Follow Us</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {restaurant?.socialInstagram && (
+                      <a href={restaurant.socialInstagram} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', fontSize: '13.5px', color: 'var(--text-secondary)', fontWeight: '500' }}>
+                        <span style={{ fontSize: '18px' }}>📸</span> Instagram
+                      </a>
+                    )}
+                    {restaurant?.socialFacebook && (
+                      <a href={restaurant.socialFacebook} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', fontSize: '13.5px', color: 'var(--text-secondary)', fontWeight: '500' }}>
+                        <span style={{ fontSize: '18px' }}>👥</span> Facebook
+                      </a>
+                    )}
+                    {restaurant?.socialTwitter && (
+                      <a href={restaurant.socialTwitter} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', fontSize: '13.5px', color: 'var(--text-secondary)', fontWeight: '500' }}>
+                        <span style={{ fontSize: '18px' }}>🐦</span> Twitter / X
+                      </a>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* 4. Collapsed accordion for secondary/policy links */}
               <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px' }}>

@@ -22,6 +22,10 @@ export default function RestaurantPage() {
     timezone: 'America/New_York',
     logoUrl: '',
     coverImageUrl: '',
+    openingHours: '',
+    socialInstagram: '',
+    socialFacebook: '',
+    socialTwitter: '',
   });
   const [logoPreview, setLogoPreview] = useState('');
   const [coverPreview, setCoverPreview] = useState('');
@@ -47,6 +51,10 @@ export default function RestaurantPage() {
             timezone: data.restaurant.timezone || 'America/New_York',
             logoUrl: data.restaurant.logoUrl || '',
             coverImageUrl: data.restaurant.coverImageUrl || '',
+            openingHours: data.restaurant.openingHours || '',
+            socialInstagram: data.restaurant.socialInstagram || '',
+            socialFacebook: data.restaurant.socialFacebook || '',
+            socialTwitter: data.restaurant.socialTwitter || '',
           });
           setLogoPreview(data.restaurant.logoUrl || '');
           setCoverPreview(data.restaurant.coverImageUrl || '');
@@ -282,6 +290,54 @@ export default function RestaurantPage() {
             value={form.receiptFooter}
             onChange={e => set('receiptFooter', e.target.value)}
             placeholder="e.g. Thanks for dining with us! Please review us on Google."
+          />
+        </div>
+
+        <h2 style={{ fontSize: 15, fontWeight: 700, margin: '24px 0 16px 0', borderTop: '1px solid var(--gray-200)', paddingTop: 16 }}>
+          🌐 Public Menu — Online Presence
+        </h2>
+
+        <div className="form-group">
+          <label className="form-label">Opening Hours (shown on public menu)</label>
+          <input
+            className="form-input"
+            value={form.openingHours}
+            onChange={e => set('openingHours', e.target.value)}
+            placeholder="e.g. Mon–Fri: 10 AM – 10 PM · Sat–Sun: 9 AM – 11 PM"
+          />
+        </div>
+
+        <div className="flex gap-12">
+          <div className="form-group" style={{ flex: 1 }}>
+            <label className="form-label">📸 Instagram URL</label>
+            <input
+              className="form-input"
+              type="url"
+              value={form.socialInstagram}
+              onChange={e => set('socialInstagram', e.target.value)}
+              placeholder="https://instagram.com/yourpage"
+            />
+          </div>
+          <div className="form-group" style={{ flex: 1 }}>
+            <label className="form-label">👥 Facebook URL</label>
+            <input
+              className="form-input"
+              type="url"
+              value={form.socialFacebook}
+              onChange={e => set('socialFacebook', e.target.value)}
+              placeholder="https://facebook.com/yourpage"
+            />
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">🐦 Twitter / X URL</label>
+          <input
+            className="form-input"
+            type="url"
+            value={form.socialTwitter}
+            onChange={e => set('socialTwitter', e.target.value)}
+            placeholder="https://x.com/yourhandle"
           />
         </div>
 

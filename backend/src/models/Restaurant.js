@@ -19,6 +19,10 @@ const restaurantSchema = new mongoose.Schema({
   subscriptionStatus: { type: String, enum: ['active', 'trial', 'expired'], default: 'trial' },
   subscriptionExpiry: { type: Date, default: () => new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) },
   timezone: { type: String, default: 'America/New_York' },
+  openingHours: { type: String, default: 'Mon–Fri: 10:00 AM – 10:00 PM · Sat–Sun: 9:00 AM – 11:00 PM' },
+  socialInstagram: { type: String, default: '' },
+  socialFacebook:  { type: String, default: '' },
+  socialTwitter:   { type: String, default: '' },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Restaurant', restaurantSchema);
