@@ -158,8 +158,8 @@ export default function MainLayout() {
       </header>
 
       {/* NAV */}
-      <nav className="main-nav" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '15px' }}>
-        <div style={{ display: 'flex', height: '100%', overflowX: 'auto', flex: 1 }} className="main-nav__scrollable">
+      <nav className="main-nav">
+        <div className="main-nav__scrollable">
           {visibleTabs.map(tab => (
             <button
               key={tab}
