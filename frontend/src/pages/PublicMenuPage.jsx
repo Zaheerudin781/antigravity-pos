@@ -49,6 +49,8 @@ export default function PublicMenuPage({ slug }) {
   // 1% luxury additions: Theme & Dietary selection
   const [darkMode, setDarkMode] = useState(localStorage.getItem('guest_dark_mode') === 'true');
   const [dietaryFilter, setDietaryFilter] = useState('All'); // All | Veg | GF | Spicy | Chef
+  const [secondaryLinksOpen, setSecondaryLinksOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleDarkMode = () => {
     const nextVal = !darkMode;
@@ -1290,7 +1292,32 @@ export default function PublicMenuPage({ slug }) {
         }
 
         /* --- RESPONSIVENESS --- */
+        .desktop-header-element {
+          display: flex;
+        }
+        .mobile-header-element {
+          display: none;
+        }
+        .mobile-footer-section {
+          display: none;
+        }
+        .desktop-footer-section {
+          display: grid;
+        }
+
         @media(max-width: 768px) {
+          .desktop-header-element {
+            display: none !important;
+          }
+          .mobile-header-element {
+            display: flex !important;
+          }
+          .mobile-footer-section {
+            display: flex !important;
+          }
+          .desktop-footer-section {
+            display: none !important;
+          }
           .menu-container {
             grid-template-columns: 1fr;
             gap: 20px;
@@ -1305,6 +1332,55 @@ export default function PublicMenuPage({ slug }) {
           .premium-hero h1 { font-size: 38px; }
           .drawer { width: 100vw; }
           .premium-nav-bar { padding: 12px 20px; }
+
+          /* Force two-column responsive grid on mobile feed */
+          .order-feed-grid {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 8px !important;
+          }
+          
+          /* Refactor card for strict two-column grid */
+          .premium-item-card {
+            flex-direction: column !important;
+            height: auto !important;
+            border-radius: 12px !important;
+          }
+          .premium-item-img-container, 
+          .premium-item-placeholder {
+            width: 100% !important;
+            height: 110px !important;
+            border-right: none !important;
+            border-bottom: 1px solid var(--border-color) !important;
+          }
+          .premium-item-body {
+            padding: 10px !important;
+          }
+          .premium-item-name {
+            font-size: 16px !important;
+            margin: 2px 0 !important;
+          }
+          .premium-item-desc {
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            font-size: 11px !important;
+            line-height: 1.4 !important;
+            margin-bottom: 6px !important;
+          }
+          .premium-item-footer {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 6px !important;
+            margin-top: 4px !important;
+          }
+          .add-cart-btn {
+            width: 100% !important;
+            padding: 6px 8px !important;
+            font-size: 11px !important;
+            text-align: center !important;
+          }
         }
 
         /* --- HELPERS --- */
@@ -1557,15 +1633,94 @@ export default function PublicMenuPage({ slug }) {
           border-radius: 12px;
           padding: 4px 10px;
         }
+
+        /* --- MOBILE HAMBURGER DROPDOWN --- */
+        .mobile-menu-dropdown {
+          position: fixed;
+          top: 60px;
+          left: 0;
+          right: 0;
+          z-index: 850;
+          background: var(--bg-glass);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border-bottom: 1px solid var(--border-color);
+          padding: 16px 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          animation: dropIn 0.25s cubic-bezier(0.16,1,0.3,1);
+        }
+        @keyframes dropIn {
+          from { transform: translateY(-12px); opacity: 0; }
+          to   { transform: translateY(0);     opacity: 1; }
+        }
+        .mobile-menu-dropdown a, .mobile-menu-dropdown button {
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--text-primary);
+          text-decoration: none;
+          background: none;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          text-align: left;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .mobile-menu-dropdown a:hover, .mobile-menu-dropdown button:hover {
+          color: var(--accent-gold);
+        }
+
+        /* --- TOAST NOTIFICATIONS --- */
+        .toast {
+          position: fixed;
+          left: 50%;
+          transform: translateX(-50%);
+          padding: 12px 24px;
+          border-radius: 30px;
+          font-size: 13.5px;
+          font-weight: 700;
+          z-index: 10001;
+          box-shadow: var(--shadow-lg);
+          animation: slideUp 0.35s cubic-bezier(0.16,1,0.3,1);
+          white-space: nowrap;
+          pointer-events: none;
+        }
+        .toast.success {
+          background: #1C1917;
+          color: #fff;
+          border: 1px solid rgba(16,185,129,0.35);
+        }
+        .toast.error {
+          background: #450a0a;
+          color: #fca5a5;
+          border: 1px solid rgba(239,68,68,0.35);
+        }
       `}} />
 
       {/* STICKY TOP BAR */}
       <nav className="premium-nav-bar">
-        <div className="premium-nav-logo" style={{ cursor: 'pointer' }} onClick={() => setActiveTrackingOrderId(null)}>
-          <span>{restaurant?.businessName ? restaurant.businessName.charAt(0) : 'R'}</span>
-          {restaurant?.businessName || 'Gourmet Bistro'}
+        {/* Left: Hamburger (mobile) + Logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Hamburger — mobile only */}
+          <button
+            className="mobile-header-element"
+            onClick={() => setMobileMenuOpen(o => !o)}
+            style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', padding: '2px 6px', color: 'var(--text-primary)', lineHeight: 1 }}
+            aria-label="Open menu"
+          >
+            {mobileMenuOpen ? '✕' : '☰'}
+          </button>
+          <div className="premium-nav-logo" style={{ cursor: 'pointer' }} onClick={() => { setActiveTrackingOrderId(null); setMobileMenuOpen(false); }}>
+            <span>{restaurant?.businessName ? restaurant.businessName.charAt(0) : 'R'}</span>
+            <span className="desktop-header-element">{restaurant?.businessName || 'Gourmet Bistro'}</span>
+          </div>
         </div>
-        <div className="nav-actions">
+
+        {/* Desktop Actions */}
+        <div className="nav-actions desktop-header-element">
           {localStorage.getItem(`active_order_${slug}`) && (
             <button 
               className="premium-btn btn-outline" 
@@ -1583,8 +1738,83 @@ export default function PublicMenuPage({ slug }) {
           <button className="theme-toggle-btn" onClick={toggleDarkMode} title="Toggle Theme">
             {darkMode ? '☀️' : '🌙'}
           </button>
+          <button className="premium-btn btn-amber" style={{ fontSize: '12px', padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => setShowCartDrawer(true)}>
+            🛒 <span>Cart ({totalCartQty})</span>
+          </button>
+        </div>
+
+        {/* Mobile Right: exactly two key action icons */}
+        <div className="mobile-header-element" style={{ alignItems: 'center', gap: '20px' }}>
+          {/* 1. Shopping Cart Icon with dynamic badge counter */}
+          <button
+            id="mobile-cart-btn"
+            onClick={() => setShowCartDrawer(true)}
+            style={{ position: 'relative', background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', padding: '4px', color: 'var(--text-primary)', lineHeight: 1 }}
+            aria-label="View cart"
+          >
+            🛒
+            {totalCartQty > 0 && (
+              <span style={{
+                position: 'absolute',
+                top: '-6px',
+                right: '-6px',
+                backgroundColor: 'var(--accent-gold)',
+                color: 'white',
+                borderRadius: '50%',
+                width: '20px',
+                height: '20px',
+                fontSize: '11px',
+                fontWeight: '800',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.2)'
+              }}>
+                {totalCartQty}
+              </span>
+            )}
+          </button>
+
+          {/* 2. Quick-Call / Phone Icon */}
+          <a
+            href={`tel:${restaurant?.phone || ''}`}
+            style={{ fontSize: '24px', textDecoration: 'none', cursor: 'pointer', padding: '4px', lineHeight: 1 }}
+            title="Call Restaurant"
+            aria-label="Call restaurant"
+          >
+            📞
+          </a>
         </div>
       </nav>
+
+      {/* MOBILE HAMBURGER DROPDOWN MENU */}
+      {mobileMenuOpen && (
+        <div className="mobile-menu-dropdown">
+          <button onClick={() => { setMobileMenuOpen(false); toggleDarkMode(); }}>
+            {darkMode ? '☀️' : '🌙'} {darkMode ? 'Light Mode' : 'Dark Mode'}
+          </button>
+          {localStorage.getItem(`active_order_${slug}`) && (
+            <button onClick={() => { setActiveTrackingOrderId(localStorage.getItem(`active_order_${slug}`)); setMobileMenuOpen(false); }}>
+              🚀 Track Active Order
+            </button>
+          )}
+          {activeTrackingOrderId && (
+            <button onClick={() => { setActiveTrackingOrderId(null); setMobileMenuOpen(false); }}>
+              📖 Back to Menu
+            </button>
+          )}
+          {restaurant?.address && (
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.address)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              📍 Find Us on Maps
+            </a>
+          )}
+        </div>
+      )}
 
       {/* VIEW: LIVE TIMELINE ORDER TRACKING SCREEN */}
       {activeTrackingOrderId && trackingOrder ? (
@@ -1838,7 +2068,7 @@ export default function PublicMenuPage({ slug }) {
                   <small>Try selecting another category or typing another search query</small>
                 </div>
               ) : (
-                <div className="menu-grid-items">
+                <div className="menu-grid-items order-feed-grid">
                   {filtered.map(item => (
                     <div
                       key={item._id}
@@ -1887,106 +2117,185 @@ export default function PublicMenuPage({ slug }) {
               )}
             </main>
 
-            {/* PREMIUM FOOTER */}
-            <footer className="premium-footer">
-              <div className="footer-inner">
-
-                {/* Brand Column */}
-                <div>
-                  <div className="footer-brand-name">
-                    <span className="footer-brand-icon">
-                      {restaurant?.businessName ? restaurant.businessName.charAt(0).toUpperCase() : 'R'}
-                    </span>
-                    {restaurant?.businessName || 'Our Restaurant'}
-                  </div>
-                  <p className="footer-tagline">
-                    Experience fine dining brought to your fingertips. Browse our curated menu, customize your meal, and place a live order — all in one seamless experience.
-                  </p>
-                  {restaurant?.receiptFooter && (
-                    <div className="footer-receipt-note">
-                      {restaurant.receiptFooter}
-                    </div>
-                  )}
-                </div>
-
-                {/* Contact Column */}
-                <div>
-                  <p className="footer-col-title">📬 Contact Us</p>
-
-                  {restaurant?.address && (
-                    <div className="footer-contact-row">
-                      <div className="footer-contact-icon">📍</div>
-                      <div>
-                        <div className="footer-contact-label">Address</div>
-                        <div className="footer-contact-value">{restaurant.address}</div>
-                      </div>
-                    </div>
-                  )}
-
-                  {restaurant?.phone && (
-                    <div className="footer-contact-row">
-                      <div className="footer-contact-icon">📞</div>
-                      <div>
-                        <div className="footer-contact-label">Phone</div>
-                        <a href={`tel:${restaurant.phone}`} style={{ textDecoration: 'none' }}>
-                          <div className="footer-contact-value" style={{ color: 'var(--accent-gold)' }}>{restaurant.phone}</div>
-                        </a>
-                      </div>
-                    </div>
-                  )}
-
-                  {restaurant?.email && (
-                    <div className="footer-contact-row">
-                      <div className="footer-contact-icon">✉️</div>
-                      <div>
-                        <div className="footer-contact-label">Email</div>
-                        <a href={`mailto:${restaurant.email}`} style={{ textDecoration: 'none' }}>
-                          <div className="footer-contact-value" style={{ color: 'var(--accent-gold)' }}>{restaurant.email}</div>
-                        </a>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Order Column */}
-                <div>
-                  <p className="footer-col-title">🛒 Place an Order</p>
-                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: 20 }}>
-                    Order online for Dine-In, Takeaway, or Delivery. Our team prepares your meal fresh with the finest ingredients.
-                  </p>
-                  <button
-                    className="footer-order-now-btn"
-                    onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  >
-                    🍽️ Browse Menu
-                  </button>
-
-                  <div style={{ marginTop: 24 }}>
-                    <p className="footer-col-title" style={{ marginBottom: 10 }}>🏷️ We Accept</p>
-                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                      <span className="footer-badge">💵 Cash</span>
-                      <span className="footer-badge">💳 Card</span>
-                      <span className="footer-badge">🚚 Delivery</span>
-                      <span className="footer-badge">🏠 Dine-In</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <hr className="footer-divider" />
-              <div className="footer-bottom">
-                <span className="footer-bottom-copy">
-                  © {new Date().getFullYear()} {restaurant?.businessName || 'Our Restaurant'}. All rights reserved. Powered by Antigravity POS.
-                </span>
-                <div className="footer-bottom-badges">
-                  <span className="footer-badge">🔒 Secure Ordering</span>
-                  <span className="footer-badge">🌱 Fresh Daily</span>
-                  <span className="footer-badge">⚡ Live Tracking</span>
-                </div>
-              </div>
-            </footer>
-
           </div>
+          {/* END .menu-container */}
+
+          {/* PREMIUM FOOTER — Full-width, outside the menu grid */}
+          <footer className="premium-footer">
+            {/* Desktop Viewport Footer */}
+            <div className="footer-inner desktop-footer-section">
+              {/* Brand Column */}
+              <div>
+                <div className="footer-brand-name">
+                  <span className="footer-brand-icon">
+                    {restaurant?.businessName ? restaurant.businessName.charAt(0).toUpperCase() : 'R'}
+                  </span>
+                  {restaurant?.businessName || 'Our Restaurant'}
+                </div>
+                <p className="footer-tagline">
+                  Experience fine dining brought to your fingertips. Browse our curated menu, customize your meal, and place a live order — all in one seamless experience.
+                </p>
+                {restaurant?.receiptFooter && (
+                  <div className="footer-receipt-note">
+                    {restaurant.receiptFooter}
+                  </div>
+                )}
+              </div>
+
+              {/* Contact Column */}
+              <div>
+                <p className="footer-col-title">📬 Contact Us</p>
+                {restaurant?.address && (
+                  <div className="footer-contact-row">
+                    <div className="footer-contact-icon">📍</div>
+                    <div>
+                      <div className="footer-contact-label">Address</div>
+                      <a 
+                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.address)}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        style={{ textDecoration: 'none' }}
+                      >
+                        <div className="footer-contact-value" style={{ color: 'var(--accent-gold)' }}>{restaurant.address}</div>
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                {restaurant?.phone && (
+                  <div className="footer-contact-row">
+                    <div className="footer-contact-icon">📞</div>
+                    <div>
+                      <div className="footer-contact-label">Phone</div>
+                      <a href={`tel:${restaurant.phone}`} style={{ textDecoration: 'none' }}>
+                        <div className="footer-contact-value" style={{ color: 'var(--accent-gold)' }}>{restaurant.phone}</div>
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                {restaurant?.email && (
+                  <div className="footer-contact-row">
+                    <div className="footer-contact-icon">✉️</div>
+                    <div>
+                      <div className="footer-contact-label">Email</div>
+                      <a href={`mailto:${restaurant.email}`} style={{ textDecoration: 'none' }}>
+                        <div className="footer-contact-value" style={{ color: 'var(--accent-gold)' }}>{restaurant.email}</div>
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Order Column */}
+              <div>
+                <p className="footer-col-title">🛒 Place an Order</p>
+                <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: 20 }}>
+                  Order online for Dine-In, Takeaway, or Delivery. Our team prepares your meal fresh with the finest ingredients.
+                </p>
+                <button
+                  className="footer-order-now-btn"
+                  onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                >
+                  🍽️ Browse Menu
+                </button>
+                <div style={{ marginTop: 24 }}>
+                  <p className="footer-col-title" style={{ marginBottom: 10 }}>🏷️ We Accept</p>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <span className="footer-badge">💵 Cash</span>
+                    <span className="footer-badge">💳 Card</span>
+                    <span className="footer-badge">🚚 Delivery</span>
+                    <span className="footer-badge">🏠 Dine-In</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Viewport Footer (Viewport < 768px) — uses CSS class to show/hide */}
+            <div className="mobile-footer-section" style={{ flexDirection: 'column', gap: '24px', padding: '10px 0 20px 0' }}>
+              {/* 1. Operating Hours */}
+              <div>
+                <h4 style={{ fontSize: '15px', color: 'var(--accent-gold)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>🕒 Operating Hours</h4>
+                <p style={{ fontSize: '13.5px', color: 'var(--text-secondary)', margin: 0 }}>
+                  Mon–Fri: 10:00 AM – 10:00 PM · Sat–Sun: 9:00 AM – 11:00 PM
+                </p>
+              </div>
+
+              {/* 2. Hyperlinked Physical Address → Google Maps */}
+              {restaurant?.address && (
+                <div>
+                  <h4 style={{ fontSize: '15px', color: 'var(--accent-gold)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>📍 Our Location</h4>
+                  <a 
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.address)}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ fontSize: '13.5px', color: 'var(--accent-gold)', textDecoration: 'underline', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    🗺️ {restaurant.address}
+                  </a>
+                </div>
+              )}
+
+              {/* 3. Social Media Icons — clean flex-column */}
+              <div>
+                <h4 style={{ fontSize: '15px', color: 'var(--accent-gold)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>📱 Follow Us</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', fontSize: '13.5px', color: 'var(--text-secondary)', fontWeight: '500' }}>
+                    <span style={{ fontSize: '18px' }}>📸</span> Instagram
+                  </a>
+                  <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', fontSize: '13.5px', color: 'var(--text-secondary)', fontWeight: '500' }}>
+                    <span style={{ fontSize: '18px' }}>👥</span> Facebook
+                  </a>
+                  <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', fontSize: '13.5px', color: 'var(--text-secondary)', fontWeight: '500' }}>
+                    <span style={{ fontSize: '18px' }}>🐦</span> Twitter / X
+                  </a>
+                </div>
+              </div>
+
+              {/* 4. Collapsed accordion for secondary/policy links */}
+              <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px' }}>
+                <button 
+                  type="button"
+                  onClick={() => setSecondaryLinksOpen(o => !o)}
+                  style={{
+                    width: '100%',
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--text-primary)',
+                    fontSize: '14px',
+                    fontWeight: '700',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '6px 0',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <span>More Info & Policies</span>
+                  <span style={{ fontSize: '12px', transition: 'transform 0.2s', transform: secondaryLinksOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>
+                </button>
+                {secondaryLinksOpen && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '14px 4px 6px', fontSize: '13px', color: 'var(--text-muted)' }}>
+                    {[['#about','About Us'],['#privacy','Privacy Policy'],['#terms','Terms of Service'],['#refund','Refund Policy']].map(([href, label]) => (
+                      <a key={href} href={href} style={{ textDecoration: 'none', color: 'inherit' }}>{label}</a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <hr className="footer-divider" />
+            <div className="footer-bottom">
+              <span className="footer-bottom-copy">
+                © {new Date().getFullYear()} {restaurant?.businessName || 'Our Restaurant'}. Powered by Antigravity POS.
+              </span>
+              <div className="footer-bottom-badges desktop-header-element">
+                <span className="footer-badge">🔒 Secure Ordering</span>
+                <span className="footer-badge">🌱 Fresh Daily</span>
+                <span className="footer-badge">⚡ Live Tracking</span>
+              </div>
+            </div>
+          </footer>
         </div>
       )}
 
