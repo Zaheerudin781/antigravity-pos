@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../api/axios';
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL
@@ -44,7 +44,6 @@ export default function PublicMenuPage({ slug }) {
   // Tracking view state
   const [activeTrackingOrderId, setActiveTrackingOrderId] = useState(localStorage.getItem(`active_order_${slug}`) || null);
   const [trackingOrder, setTrackingOrder] = useState(null);
-  const [trackingLoading, setTrackingLoading] = useState(false);
 
   // 1% luxury additions: Theme & Dietary selection
   const [darkMode, setDarkMode] = useState(localStorage.getItem('guest_dark_mode') === 'true');

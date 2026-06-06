@@ -7,8 +7,7 @@ const BACKEND = import.meta.env.VITE_API_URL
   : 'http://localhost:5000';
 
 export default function RestaurantPage() {
-  const { state, dispatch, notify } = useApp();
-  const { restaurant } = state;
+  const { dispatch, notify } = useApp();
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({
     businessName: '',
@@ -66,7 +65,7 @@ export default function RestaurantPage() {
       }
     };
     fetchRestaurantSettings();
-  }, []);
+  }, [notify]);
 
   const handleSave = async (e) => {
     e.preventDefault();
