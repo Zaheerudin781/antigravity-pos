@@ -153,7 +153,7 @@ export default function MainLayout() {
           <button className="main-header__help" onClick={() => dispatch({ type: 'LOGOUT' })}>
             Logout
           </button>
-          <button className="main-header__help">Help</button>
+          <button className="main-header__help main-header__help--desktop">Help</button>
         </div>
       </header>
 
